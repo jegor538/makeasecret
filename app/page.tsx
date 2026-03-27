@@ -31,10 +31,17 @@ export default function Home() {
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to create secret");
+      }
+
+      if (!data.id) {
+        throw new Error("No ID returned from server");
+      }
 
       setLink(`${window.location.origin}/${data.id}`);
     } catch (err) {
+      console.error("Frontend error:", err);
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
@@ -47,16 +54,16 @@ export default function Home() {
 
   return (
     <div className="container">
-      <h1 className="title">makeasecret</h1>
+      <h1 className="title">make a secret</h1>
 
       {!link ? (
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <div className="label">secret</div>
+            <div className="label">your secret</div>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="write your secret here..."
+              placeholder="write anything..."
             />
           </div>
 
@@ -68,23 +75,33 @@ export default function Home() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="leave empty for no password"
             />
-            <small>if set, recipient will need this to read</small>
+            <small>recipient will need this password to read</small>
           </div>
 
           <button type="submit" disabled={loading}>
-            {loading ? "creating..." : "make a secret"}
+            {loading ? "creating..." : "make a secret →"}
           </button>
 
           {error && <div className="error">{error}</div>}
         </form>
       ) : (
         <div>
-          <div className="success">secret created. share this link:</div>
+          <div className="success">✓ secret created. share this link:</div>
           <div className="link-box">
             <input type="text" value={link} readOnly />
-            <button onClick={copyLink}>copy</button>
+            <button onClick={copyLink}>copy link</button>
           </div>
-          <small>link dies after one view or 24 hours</small>
+          <small>dies after one view or 24 hours</small>
+          <button 
+            onClick={() => {
+              setLink("");
+              setText("");
+              setPassword("");
+            }}
+            style={{ marginTop: "1rem", background: "#6b7280" }}
+          >
+            make another
+          </button>
         </div>
       )}
     </div>
