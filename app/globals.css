@@ -1,0 +1,174 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #000000;
+  font-family: 'Courier New', 'Monaco', monospace;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px;
+  width: 100%;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #424242;
+  margin-bottom: 2rem;
+  letter-spacing: -2px;
+  word-break: break-word;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+textarea {
+  width: 100%;
+  background: #0a0a0a;
+  border: 2px solid #424242;
+  color: #e0e0e0;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  padding: 1rem;
+  resize: vertical;
+  min-height: 150px;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #666;
+}
+
+input {
+  width: 100%;
+  background: #0a0a0a;
+  border: 2px solid #424242;
+  color: #e0e0e0;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  padding: 0.75rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #666;
+}
+
+button {
+  width: 100%;
+  background: #424242;
+  border: none;
+  color: #000000;
+  font-family: 'Courier New', monospace;
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: #666;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secret-box {
+  background: #0a0a0a;
+  border: 2px solid #424242;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.secret-text {
+  color: #e0e0e0;
+  font-size: 1rem;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.link-box {
+  background: #0a0a0a;
+  border: 2px solid #424242;
+  padding: 1rem;
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.link-box input {
+  flex: 1;
+  margin: 0;
+  min-width: 150px;
+}
+
+.link-box button {
+  width: auto;
+  padding: 0.75rem 1.5rem;
+}
+
+.error {
+  color: #ff6b6b;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 2px solid #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.success {
+  color: #6bff6b;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 2px solid #6bff6b;
+  background: rgba(107, 255, 107, 0.1);
+}
+
+.label {
+  color: #424242;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+small {
+  color: #424242;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+hr {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .container {
+    padding: 10px;
+  }
+  
+  .link-box {
+    flex-direction: column;
+  }
+  
+  .link-box button {
+    width: 100%;
+  }
+}
