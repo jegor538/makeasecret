@@ -11,8 +11,9 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!text.trim()) {
-      setError("Write something first");
+      setError("write something");
       return;
     }
 
@@ -32,17 +33,13 @@ export default function Home() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to create secret");
-      }
-
-      if (!data.id) {
-        throw new Error("No ID returned from server");
+        throw new Error(data.error || "failed to create");
       }
 
       setLink(`${window.location.origin}/${data.id}`);
     } catch (err) {
-      console.error("Frontend error:", err);
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      console.error(err);
+      setError(err instanceof Error ? err.message : "something went wrong");
     } finally {
       setLoading(false);
     }
@@ -54,16 +51,16 @@ export default function Home() {
 
   return (
     <div className="container">
-      <h1 className="title">make a secret</h1>
+      <h1 className="title">makeasecret</h1>
 
       {!link ? (
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <div className="label">your secret</div>
+            <div className="label">secret</div>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="write anything..."
+              placeholder="write here"
             />
           </div>
 
@@ -73,35 +70,24 @@ export default function Home() {
               type="text"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="leave empty for no password"
+              placeholder="leave empty for none"
             />
-            <small>recipient will need this password to read</small>
           </div>
 
           <button type="submit" disabled={loading}>
-            {loading ? "creating..." : "make a secret →"}
+            {loading ? "creating..." : "make a secret"}
           </button>
 
           {error && <div className="error">{error}</div>}
         </form>
       ) : (
         <div>
-          <div className="success">✓ secret created. share this link:</div>
+          <div className="success">secret created</div>
           <div className="link-box">
             <input type="text" value={link} readOnly />
-            <button onClick={copyLink}>copy link</button>
+            <button onClick={copyLink}>copy</button>
           </div>
           <small>dies after one view or 24 hours</small>
-          <button 
-            onClick={() => {
-              setLink("");
-              setText("");
-              setPassword("");
-            }}
-            style={{ marginTop: "1rem", background: "#6b7280" }}
-          >
-            make another
-          </button>
         </div>
       )}
     </div>
