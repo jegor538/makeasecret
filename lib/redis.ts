@@ -3,9 +3,9 @@ import { Redis } from "ioredis";
 const UPSTASH_REDIS_REST_URL = "https://bright-maggot-86346.upstash.io";
 const UPSTASH_REDIS_REST_TOKEN = "AYXAAIncDI4ZjI0NTUxNDUyOWY0NWE5YjdmNmY1MmE1OGU4ODIwY3AyODYzNDY";
 
-// Правильное подключение к Upstash Redis через REST
+// Правильный формат для Upstash Redis
 const redis = new Redis({
-  host: "bright-maggot-86346.upstash.io",
+  host: UPSTASH_REDIS_REST_URL.replace("https://", ""),
   port: 6379,
   password: UPSTASH_REDIS_REST_TOKEN,
   tls: {},
@@ -14,6 +14,15 @@ const redis = new Redis({
     if (times > 3) return null;
     return Math.min(times * 100, 3000);
   }
+});
+
+// Проверка подключения
+redis.on('connect', () => {
+  console.log('Redis connected');
+});
+
+redis.on('error', (err) => {
+  console.error('Redis error:', err);
 });
 
 export const saveSecret = async (id: string, text: string, password: string | null) => {
