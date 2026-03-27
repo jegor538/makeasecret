@@ -3,9 +3,11 @@ const UPSTASH_REDIS_REST_TOKEN = "AYXAAIncDI4ZjI0NTUxNDUyOWY0NWE5YjdmNmY1MmE1OGU
 
 export const saveSecret = async (id: string, text: string, password: string | null) => {
   const data = JSON.stringify({ text, password });
+  
+  // Upstash использует токен напрямую в заголовке
   const url = `${UPSTASH_REDIS_REST_URL}/set/${id}?ex=86400`;
   
-  console.log("Saving to Redis:", url);
+  console.log("Saving secret:", id);
   
   const res = await fetch(url, {
     method: 'POST',
@@ -16,19 +18,24 @@ export const saveSecret = async (id: string, text: string, password: string | nu
     body: data,
   });
   
+  const responseText = await res.text();
+  console.log("Redis response:", res.status, responseText);
+  
   if (!res.ok) {
-    const errorText = await res.text();
-    console.error("Redis save error:", res.status, errorText);
-    throw new Error(`Redis error: ${res.status}`);
+    throw new Error(`Redis error: ${res.status} - ${responseText}`);
   }
   
-  console.log("Secret saved successfully");
+  try {
+    return JSON.parse(responseText);
+  } catch {
+    return responseText;
+  }
 };
 
 export const getAndDeleteSecret = async (id: string, password: string | null) => {
   const getUrl = `${UPSTASH_REDIS_REST_URL}/get/${id}`;
   
-  console.log("Fetching from Redis:", getUrl);
+  console.log("Getting secret:", id);
   
   const getRes = await fetch(getUrl, {
     headers: {
@@ -36,13 +43,19 @@ export const getAndDeleteSecret = async (id: string, password: string | null) =>
     },
   });
   
+  const getText = await getRes.text();
+  console.log("Get response:", getRes.status, getText);
+  
   if (!getRes.ok) {
-    console.error("Redis get error:", getRes.status);
     return null;
   }
   
-  const data = await getRes.json();
-  console.log("Redis response:", data);
+  let data;
+  try {
+    data = JSON.parse(getText);
+  } catch {
+    return null;
+  }
   
   if (!data.result) return null;
   
