@@ -1,32 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAndDeleteSecret } from "@/lib/redis";
+import { nanoid } from "nanoid";
+import { saveSecret } from "@/lib/redis";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: NextRequest) {
   try {
-    const { password } = await req.json();
-    const result = await getAndDeleteSecret(params.id, password || null);
+    const body = await req.json();
+    const { text, password } = body;
+    
+    console.log("API /create called");
+    console.log("Text length:", text?.length);
+    console.log("Password provided:", !!password);
 
-    if (!result) {
+    if (!text || text.length > 10000) {
+      console.log("Validation failed");
       return NextResponse.json(
-        { error: "Secret not found or already destroyed" },
-        { status: 404 }
+        { error: "Secret too long or empty" },
+        { status: 400 }
       );
     }
 
-    if ("needPassword" in result && result.needPassword) {
-      return NextResponse.json(
-        { error: "Password required" },
-        { status: 402 }
-      );
-    }
+    const id = nanoid(8);
+    console.log("Generated ID:", id);
+    
+    await saveSecret(id, text, password || null);
+    console.log("Secret saved successfully");
 
-    return NextResponse.json({ text: result.text });
+    return NextResponse.json({ id });
   } catch (error) {
+    console.error("Create error:", error);
     return NextResponse.json(
-      { error: "Failed to retrieve secret" },
+      { error: error instanceof Error ? error.message : "Failed to create secret" },
       { status: 500 }
     );
   }
